@@ -1,4 +1,9 @@
-class Atom:
+class Expression:
+    def eval(self):
+        raise NotImplementedError()
+    
+
+class Atom(Expression):
     def __init__(self, val):
         self.val = val    
 
@@ -9,18 +14,17 @@ class Atom:
         cls_name = self.__class__.__name__
         return "{name}({val})".format(name=cls_name, val=self.val)
 
-    def eval(self):
-        raise NotImplementedError()
-    
 
 class Number(Atom):
     def eval(self):
         return self
 
+
 class Symbol(Atom):
     pass
 
-class List:
+
+class List(Expression):
     def __init__(self, values):
         self.values = values
 
@@ -31,3 +35,4 @@ class List:
     def __repr__(self):
         vals = ", ".join(repr(v) for v in self.values)
         return "List({})".format(vals)
+        
