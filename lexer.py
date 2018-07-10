@@ -11,7 +11,7 @@ class LispishLexer(sly.Lexer):
     # including decimals
     NUMBER = r"-?((\.\d+)|(\d+\.\d*)|(\d+))"
     # get-values, +, - are valid names 
-    NAME = r"[\w\-+*\/=<>][\w0-9_\-=><]*['!?]*"
+    NAME = r"[a-zA-Z_\-+*\/=<>][\w\-=><]*['!?]*"
     SEP = r"\s" # whitespace separator
 
 if __name__ == "__main__":
