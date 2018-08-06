@@ -1,8 +1,7 @@
-from proc import Proc
 
 class Expression:
     def eval(self, env):
-        
+        raise NotImplementedError()        
     
 
 class Atom(Expression):
@@ -16,6 +15,9 @@ class Atom(Expression):
         cls_name = self.__class__.__name__
         return "{name}({val})".format(name=cls_name, val=self.val)
 
+    def __eq__(self, other):
+        return type(self) is type(other) and self.val == other.val
+
 
 class Number(Atom):
     def eval(self, env):
@@ -26,6 +28,7 @@ class Symbol(Atom):
     def eval(self, env):
         return env[self.val] # val is a str (the symbol's name).
 
+from proc import Proc
 
 class List(Expression):
     def __init__(self, values):
@@ -38,6 +41,9 @@ class List(Expression):
     def __repr__(self):
         vals = ", ".join(repr(v) for v in self.values)
         return "List({})".format(vals)
+
+    def __eq__(self, other):
+        return type(self) is type(other) and self.values == other.values
 
     def eval(self, env) -> Expression:
         first_arg = self.values[0]
