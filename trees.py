@@ -46,30 +46,35 @@ class List(Expression):
         return type(self) is type(other) and self.values == other.values
 
     def eval(self, env) -> Expression:
-        first_arg = self.values[0]
-        rest_args = self.values[1:]
-        if type(first_arg) is Proc:
-            proc = first_arg
-            args = rest_args
+        first = self.values[0]
+        rest = self.values[1:]
+        if type(first) is Proc:
+            proc = first
+            args = rest
             # apply takes a list comprehension 
             # with every value in args evaluated.
             return proc.apply([a.eval(env) for a in args])
-        elif type(first_arg) is Symbol:
-            if first_arg.val == "define":
-                if type(rest_args[0]) is Symbol:
-                    env.declare(rest_args[0].val)
-                    retVal = rest_args[1].eval(env) 
-                    env[rest_args[0].val] = retVal
-                else: raise Error("Define only accepts Symbol")
-            elif first_arg.val == "lambda":
+        elif type(first) is Symbol:
+            if first.val == "define":
+                if type(rest[0]) is not Symbol:
+                    raise Error("First arg to define must be a symbol!")
+                if len(rest) != 2:
+                    raise Error("Define requires exactly 2 arguments!")
+
+                sym, value = rest       # Split rest into two parts
+                env.declare(str(sym))   # Declare the symbol
+                value = value.eval(env) # Evaluate the value-to-be-assigned
+                env[str(sym)] = value   # Assign the value
+
+            elif first.val == "lambda":
                 raise NotImplementedError("Define lambda!")
             else: # it must be a user-defined symbol
-                proc = first_arg.eval(env)
+                proc = first.eval(env)
                 
                 if type(proc) is not Proc:
                     raise Error("Initial list element must be a Proc!")
 
-                new_self = List([proc] + rest_args)
+                new_self = List([proc] + rest)
                 return new_self.eval(env)
 
         return None
