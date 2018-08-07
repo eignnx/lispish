@@ -9,7 +9,7 @@ class Atom(Expression):
         self.val = val    
 
     def __str__(self):
-        return self.val
+        return "{}".format(self.val)
 
     def __repr__(self):
         cls_name = self.__class__.__name__
@@ -20,13 +20,43 @@ class Atom(Expression):
 
 
 class Number(Atom):
+
     def eval(self, env):
+        """Defined to return another Number instance, NOT a Python number type"""
         return self
+
+    def __int__(self):
+        """Conversion to Python int"""
+        return int(self.val)
+
+    def __float__(self):
+        """Conversion to Python float"""
+        return float(self.val)
+
+    ### Operator Overloads ###
+
+    def __add__(self, other):
+        return Number(self.val + other.val)
+
+    def __sub__(self, other):
+        return Number(self.val - other.val)
+
+    def __mul__(self, other):
+        return Number(self.val * other.val)
+
+    def __truediv__(self, other):
+        return Number(self.val / other.val)
+
+    def __mod__(self, other):
+        return Number(self.val % other.val)
+
+    def __pow__(self, other):
+        return Number(self.val ** other.val)
 
 
 class Symbol(Atom):
     def eval(self, env):
-        return env[str(self)] # val is a str (the symbol's name).
+        return env[str(self)]
 
 from proc import Proc
 
@@ -44,6 +74,14 @@ class List(Expression):
 
     def __eq__(self, other):
         return type(self) is type(other) and self.values == other.values
+
+    def __iter__(self):
+        """Allows a List to be iterated over directly"""
+        return iter(self.values)
+
+    def __getitem__(self, i):
+        """Defines array subscript notation on List instances"""
+        return self.values[i]
 
     def eval(self, env) -> Expression:
         first = self.values[0]
