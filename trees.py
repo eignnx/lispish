@@ -9,7 +9,7 @@ class Atom(Expression):
         self.val = val    
 
     def __str__(self):
-        return "{}".format(self.val)
+        return self.val
 
     def __repr__(self):
         cls_name = self.__class__.__name__
@@ -26,7 +26,7 @@ class Number(Atom):
 
 class Symbol(Atom):
     def eval(self, env):
-        return env[self.val] # val is a str (the symbol's name).
+        return env[str(self)] # val is a str (the symbol's name).
 
 from proc import Proc
 
@@ -55,7 +55,7 @@ class List(Expression):
             # with every value in args evaluated.
             return proc.apply([a.eval(env) for a in args])
         elif type(first) is Symbol:
-            if first.val == "define":
+            if str(first) == "define":
                 if type(rest[0]) is not Symbol:
                     raise Error("First arg to define must be a symbol!")
                 if len(rest) != 2:
@@ -66,7 +66,7 @@ class List(Expression):
                 value = value.eval(env) # Evaluate the value-to-be-assigned
                 env[str(sym)] = value   # Assign the value
 
-            elif first.val == "lambda":
+            elif str(first) == "lambda":
                 raise NotImplementedError("Define lambda!")
             else: # it must be a user-defined symbol
                 proc = first.eval(env)
